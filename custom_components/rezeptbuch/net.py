@@ -65,15 +65,35 @@ class FetchResult:
             return self.body.decode("utf-8", errors="replace")
 
 
-def is_public_ip(ip: str) -> bool:
-    """True nur für öffentlich routbare Unicast-Adressen."""
+_CGNAT = ipaddress.ip_network("100.64.0.0/10")  # z. B. Tailscale
+
+
+def is_allowed_ip(ip: str, allow_private: bool = False) -> bool:
+    """Darf diese Adresse abgerufen werden?
+
+    Immer gesperrt: Loopback, unspezifiziert (0.0.0.0/::), Link-Local (inkl.
+    Cloud-Metadaten 169.254.169.254), Multicast, reservierte Bereiche.
+    Private LAN-Bereiche (10/8, 172.16/12, 192.168/16, fc00::/7, 100.64/10)
+    nur mit allow_private. Öffentliche Unicast-Adressen immer.
+    """
     try:
         addr = ipaddress.ip_address(ip.split("%", 1)[0])
     except ValueError:
         return False
     if isinstance(addr, ipaddress.IPv6Address) and addr.ipv4_mapped is not None:
         addr = addr.ipv4_mapped
-    return bool(addr.is_global) and not addr.is_multicast
+    if addr.is_loopback or addr.is_unspecified or addr.is_link_local or addr.is_multicast or addr.is_reserved:
+        return False
+    if addr.is_global:
+        return True
+    if not allow_private:
+        return False
+    return addr.is_private or (isinstance(addr, ipaddress.IPv4Address) and addr in _CGNAT)
+
+
+def is_public_ip(ip: str) -> bool:
+    """True nur für öffentlich routbare Unicast-Adressen."""
+    return is_allowed_ip(ip, allow_private=False)
 
 
 async def async_resolve_host(hass: HomeAssistant, host: str) -> list[str]:
@@ -97,13 +117,20 @@ def parse_http_url(url: str) -> URL:
     return parsed
 
 
-async def async_check_target(hass: HomeAssistant, url: URL) -> None:
-    """SSRF-Schutz: alle aufgelösten Adressen müssen öffentlich sein."""
-    host = url.host or ""
-    if host.lower() in ("localhost", "localhost.localdomain") or host.lower().endswith(
-        (".local", ".localhost", ".internal", ".lan", ".home.arpa")
-    ):
+_LOOPBACK_NAMES = ("localhost", "localhost.localdomain", "ip6-localhost", "ip6-loopback")
+_LAN_SUFFIXES = (".local", ".internal", ".lan", ".home.arpa", ".fritz.box")
+
+
+async def async_check_target(hass: HomeAssistant, url: URL, *, allow_private: bool = False) -> None:
+    """SSRF-Schutz: alle aufgelösten Adressen müssen erlaubt sein.
+
+    localhost/Loopback ist immer gesperrt – auch mit allow_private.
+    """
+    host = (url.host or "").lower().rstrip(".")
+    if host in _LOOPBACK_NAMES or host.endswith(".localhost"):
         raise BlockedAddress(f"Lokale Adresse nicht erlaubt: {host}", host=host)
+    if not allow_private and host.endswith(_LAN_SUFFIXES):
+        raise BlockedAddress(f"Adresse im lokalen Netz nicht erlaubt: {host}", host=host)
     try:
         ipaddress.ip_address(host.strip("[]"))
         addresses = [host.strip("[]")]
@@ -115,7 +142,7 @@ async def async_check_target(hass: HomeAssistant, url: URL) -> None:
     if not addresses:
         raise FetchFailed(f"Host nicht gefunden: {host}", host=host, reason="keine Adresse")
     for address in addresses:
-        if not is_public_ip(address):
+        if not is_allowed_ip(address, allow_private):
             raise BlockedAddress(f"Private oder lokale Adresse nicht erlaubt: {host}", host=host)
 
 
@@ -126,6 +153,7 @@ async def async_safe_get(
     max_bytes: int = MAX_HTML_BYTES,
     timeout: float = DEFAULT_TIMEOUT,
     accept: str = "text/html,application/xhtml+xml;q=0.9,*/*;q=0.8",
+    allow_private: bool = False,
 ) -> FetchResult:
     """GET mit SSRF-Schutz, Größenlimit, Timeout und geprüften Weiterleitungen."""
     session = async_get_clientsession(hass)
@@ -138,7 +166,7 @@ async def async_safe_get(
     try:
         async with asyncio.timeout(timeout):
             for _ in range(MAX_REDIRECTS + 1):
-                await async_check_target(hass, current)
+                await async_check_target(hass, current, allow_private=allow_private)
                 async with session.get(
                     current,
                     headers=headers,

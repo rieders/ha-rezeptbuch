@@ -1,0 +1,43 @@
+{
+  "exceptions": {
+    "unknown_error": {
+      "message": "Unbekannter Fehler im Rezeptbuch."
+    },
+    "invalid_url": {
+      "message": "Die Adresse ist ungültig oder wird nicht unterstützt: {url}"
+    },
+    "blocked_address": {
+      "message": "Zugriff auf diese Adresse ist nicht erlaubt (lokales oder privates Netz): {host}"
+    },
+    "fetch_failed": {
+      "message": "Die Seite konnte nicht abgerufen werden ({reason})."
+    },
+    "response_too_large": {
+      "message": "Die Seite ist zu groß für den Import."
+    },
+    "no_recipe_found": {
+      "message": "Auf der Seite wurde kein Rezept gefunden."
+    },
+    "invalid_image": {
+      "message": "Die Datei ist kein unterstütztes Bild (JPEG, PNG, WebP, GIF)."
+    },
+    "draft_not_found": {
+      "message": "Der Import-Entwurf existiert nicht mehr."
+    },
+    "duplicate_recipe": {
+      "message": "Dieses Rezept ist bereits vorhanden: „{title}“ (ID {recipe_id})."
+    },
+    "no_ai_task_entity": {
+      "message": "Für den Foto-Import wird eine KI-Aufgabe (ai_task) benötigt. Bitte eine KI-Integration einrichten und in den Rezeptbuch-Optionen oder unter Einstellungen → KI als Standard wählen."
+    },
+    "ai_task_entity_not_found": {
+      "message": "Die ausgewählte KI-Entität {entity_id} gibt es nicht (mehr). Bitte in den Rezeptbuch-Optionen eine andere wählen."
+    },
+    "ai_task_failed": {
+      "message": "Die KI-Auswertung der Fotos ist fehlgeschlagen: {reason}"
+    },
+    "no_photos": {
+      "message": "Bitte mindestens ein Foto auswählen (höchstens 10)."
+    }
+  }
+}

@@ -240,8 +240,12 @@ async def async_import_url(
     category_ids: list[int] | None = None,
     tags: list[str] | None = None,
     allow_duplicate: bool = False,
+    allow_private_networks: bool = False,
 ) -> dict[str, Any]:
     """URL importieren → Entwurf oder Duplikat-Hinweis.
+
+    allow_private_networks: Option „Private Netzwerkadressen erlauben“ – dann
+    sind auch LAN-Ziele (z. B. lokales Mealie/Tandoor) erlaubt; Loopback nie.
 
     Rückgabe:
         {"status": "duplicate", "recipe_id", "title", "source_url"}
@@ -261,7 +265,7 @@ async def async_import_url(
     if not allow_duplicate and (dup := await _async_duplicate(db, normalized)):
         return dup
 
-    page = await async_safe_get(hass, fetch_url)
+    page = await async_safe_get(hass, fetch_url, allow_private=allow_private_networks)
     scraped = await hass.async_add_executor_job(parse_html, page.text(), page.url)
     scraped.source_url = normalize_url(scraped.source_url)
 
@@ -271,7 +275,9 @@ async def async_import_url(
     image_path: str | None = None
     if scraped.image_url:
         try:
-            image_path = await async_download_image(hass, storage, scraped.image_url)
+            image_path = await async_download_image(
+                hass, storage, scraped.image_url, allow_private=allow_private_networks
+            )
         except RezeptbuchError as err:
             _LOGGER.info("Rezeptbild %s nicht geladen: %s", scraped.image_url, err)
             scraped.warnings.append(WARN_NO_IMAGE)

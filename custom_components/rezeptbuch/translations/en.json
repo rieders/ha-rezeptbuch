@@ -1,0 +1,43 @@
+{
+  "exceptions": {
+    "unknown_error": {
+      "message": "Unknown error in Rezeptbuch."
+    },
+    "invalid_url": {
+      "message": "The address is invalid or not supported: {url}"
+    },
+    "blocked_address": {
+      "message": "Access to this address is not allowed (local or private network): {host}"
+    },
+    "fetch_failed": {
+      "message": "The page could not be fetched ({reason})."
+    },
+    "response_too_large": {
+      "message": "The page is too large to import."
+    },
+    "no_recipe_found": {
+      "message": "No recipe was found on the page."
+    },
+    "invalid_image": {
+      "message": "The file is not a supported image (JPEG, PNG, WebP, GIF)."
+    },
+    "draft_not_found": {
+      "message": "The import draft no longer exists."
+    },
+    "duplicate_recipe": {
+      "message": "This recipe already exists: \"{title}\" (ID {recipe_id})."
+    },
+    "no_ai_task_entity": {
+      "message": "Photo import requires an AI task (ai_task) entity. Please set up an AI integration and select it in the Rezeptbuch options or as default under Settings → AI."
+    },
+    "ai_task_entity_not_found": {
+      "message": "The selected AI entity {entity_id} does not exist (anymore). Please choose another one in the Rezeptbuch options."
+    },
+    "ai_task_failed": {
+      "message": "AI analysis of the photos failed: {reason}"
+    },
+    "no_photos": {
+      "message": "Please select at least one photo (at most 10)."
+    }
+  }
+}

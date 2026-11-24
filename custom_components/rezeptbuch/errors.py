@@ -76,3 +76,27 @@ class DuplicateRecipe(RezeptbuchError):
         )
         self.recipe_id = recipe_id
         self.title = title
+
+
+class NoAiTaskEntity(RezeptbuchError):
+    """Keine (eindeutige) ai_task-Entität verfügbar."""
+
+    translation_key = "no_ai_task_entity"
+
+
+class AiTaskEntityNotFound(RezeptbuchError):
+    """Die konfigurierte ai_task-Entität existiert nicht (mehr)."""
+
+    translation_key = "ai_task_entity_not_found"
+
+
+class AiTaskFailed(RezeptbuchError):
+    """Die KI-Auswertung ist fehlgeschlagen."""
+
+    translation_key = "ai_task_failed"
+
+
+class NoPhotos(RezeptbuchError):
+    """Keine Fotos übergeben."""
+
+    translation_key = "no_photos"

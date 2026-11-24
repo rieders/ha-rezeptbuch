@@ -99,3 +99,23 @@ def detect_timer_seconds(text: str | None) -> int | None:
     if not candidates:
         return None
     return max(candidates)
+
+
+def parse_minutes_text(text: str | int | float | None) -> int | None:
+    """Zeitangabe als Text → Minuten ("20 Min.", "1 Std. 30 Min.", "45", "PT1H")."""
+    if text is None or text == "":
+        return None
+    if isinstance(text, (int, float)):
+        return round(text) if text > 0 else None
+    value = str(text).strip()
+    if re.fullmatch(r"\d+(?:[.,]\d+)?", value):
+        minutes = round(float(value.replace(",", ".")))
+        return minutes or None
+    if value.upper().startswith("P"):
+        from .importer.jsonld import parse_duration_minutes
+
+        return parse_duration_minutes(value)
+    seconds = detect_timer_seconds(value)
+    if not seconds:
+        return None
+    return max(1, round(seconds / 60))

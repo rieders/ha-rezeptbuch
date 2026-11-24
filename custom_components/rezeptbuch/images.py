@@ -68,10 +68,14 @@ async def async_store_image(hass: HomeAssistant, storage: Storage, data: bytes) 
     return await hass.async_add_executor_job(_store)
 
 
-async def async_download_image(hass: HomeAssistant, storage: Storage, url: str) -> str:
+async def async_download_image(hass: HomeAssistant, storage: Storage, url: str, *, allow_private: bool = False) -> str:
     """Bild (mit SSRF-Schutz) herunterladen, prüfen und lokal speichern."""
     result = await async_safe_get(
-        hass, url, max_bytes=MAX_IMAGE_BYTES, accept="image/avif,image/webp,image/png,image/jpeg,image/*;q=0.8"
+        hass,
+        url,
+        max_bytes=MAX_IMAGE_BYTES,
+        accept="image/avif,image/webp,image/png,image/jpeg,image/*;q=0.8",
+        allow_private=allow_private,
     )
     if result.content_type and not result.content_type.startswith(("image/", "application/octet-stream")):
         raise InvalidImage(f"Kein Bild (Content-Type {result.content_type})")

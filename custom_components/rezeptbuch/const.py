@@ -21,10 +21,12 @@ CONF_DAILY_CATEGORY_IDS: Final = "daily_category_ids"
 CONF_RATING_WEIGHT: Final = "rating_weight"
 CONF_RECENCY_WEIGHT: Final = "recency_weight"
 CONF_IDEA_SENSORS: Final = "idea_sensors"
+CONF_ALLOW_PRIVATE_NETWORKS: Final = "allow_private_networks"
 
 DEFAULT_SERVINGS: Final = 4
 DEFAULT_RATING_WEIGHT: Final = 2.0
 DEFAULT_RECENCY_WEIGHT: Final = 1.0
+DEFAULT_ALLOW_PRIVATE_NETWORKS: Final = False
 
 # Quellen / Arten
 SOURCE_URL: Final = "url"

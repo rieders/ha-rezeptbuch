@@ -105,7 +105,7 @@ def delete_draft(conn: sqlite3.Connection, draft_id: int) -> list[str]:
     paths = list(draft["image_paths"])
     if draft["data"].get("image"):
         paths.append(draft["data"]["image"])
-    return paths
+    return sorted(set(paths))
 
 
 def confirm_draft(
@@ -128,6 +128,9 @@ def confirm_draft(
         dups = find_duplicates(conn, data["source_url"])
         if dups:
             raise DuplicateRecipe(dups[0]["id"], dups[0]["title"])
+    allowed_images = set(draft["image_paths"]) | ({draft["data"]["image"]} if draft["data"].get("image") else set())
+    if data.get("image") and data["image"] not in allowed_images:
+        raise ValidationError("Das Rezeptbild muss eines der Bilder dieses Entwurfs sein")
     category_ids = [int(c) for c in data.get("category_ids") or []]
     recipe_id = create_recipe(
         conn,
@@ -153,3 +156,32 @@ def confirm_draft(
     )
     conn.execute("DELETE FROM import_drafts WHERE id = ?", (draft_id,))
     return {"recipe_id": recipe_id}
+
+
+def delete_drafts_older_than(conn: sqlite3.Connection, cutoff_iso: str) -> tuple[int, list[str]]:
+    """Unbestätigte Entwürfe älter als `cutoff_iso` löschen.
+
+    Gibt (Anzahl, nicht mehr benötigte Bildpfade) zurück.
+    """
+    ids = [r[0] for r in conn.execute("SELECT id FROM import_drafts WHERE updated < ?", (cutoff_iso,))]
+    paths: list[str] = []
+    for draft_id in ids:
+        paths.extend(delete_draft(conn, draft_id))
+    return len(ids), sorted(set(paths))
+
+
+def referenced_image_paths(conn: sqlite3.Connection) -> set[str]:
+    """Alle Bildpfade, auf die die Datenbank verweist (Rezepte, Kochprotokoll, Entwürfe)."""
+    paths: set[str] = set()
+    for sql in (
+        "SELECT image FROM recipes WHERE image IS NOT NULL",
+        "SELECT path FROM recipe_images",
+        "SELECT photo FROM cook_log WHERE photo IS NOT NULL",
+    ):
+        paths.update(r[0] for r in conn.execute(sql))
+    for data, image_paths in conn.execute("SELECT data, image_paths FROM import_drafts"):
+        paths.update(json.loads(image_paths or "[]"))
+        image = json.loads(data).get("image")
+        if image:
+            paths.add(image)
+    return paths

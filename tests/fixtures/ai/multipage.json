@@ -1,0 +1,27 @@
+{
+  "conversation_id": "test-multipage",
+  "data": {
+    "title": "Käse-Lauch-Suppe",
+    "servings": "4 Portionen",
+    "prep_time": "15 Min.",
+    "cook_time": "25 Min.",
+    "total_time": "40 Min.",
+    "ingredients": [
+      "Für die Suppe:",
+      "2 Stangen Lauch",
+      "500 g Hackfleisch",
+      "1 l Gemüsebrühe",
+      "200 g Schmelzkäse",
+      "Zum Servieren:",
+      "1/2 Bund Schnittlauch",
+      "etwas Pfeffer"
+    ],
+    "steps": [
+      "Lauch in Ringe schneiden, Hackfleisch krümelig anbraten.",
+      "Lauch zugeben, mit Brühe ablöschen und 20 Minuten köcheln lassen.",
+      "Schmelzkäse einrühren, bis er geschmolzen ist.",
+      "Mit Schnittlauch und Pfeffer servieren."
+    ],
+    "category": "Suppe"
+  }
+}

@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
+from difflib import SequenceMatcher
 import json
 import random
 import re
 import sqlite3
 from typing import Any
+import unicodedata
 
 from ..const import (
     IMAGE_COVER,
@@ -492,3 +494,28 @@ def get_recipe(conn: sqlite3.Connection, recipe_id: int, version_id: int | None 
 def count_recipes(conn: sqlite3.Connection) -> int:
     """Anzahl Rezepte."""
     return conn.execute("SELECT COUNT(*) FROM recipes").fetchone()[0]
+
+
+def _title_key(title: str) -> str:
+    text = unicodedata.normalize("NFKD", (title or "").casefold())
+    text = "".join(c for c in text if not unicodedata.combining(c)).replace("ß", "ss")
+    return " ".join(re.findall(r"[a-z0-9]+", text))
+
+
+def find_similar_titles(
+    conn: sqlite3.Connection, title: str, *, threshold: float = 0.85, limit: int = 3
+) -> list[dict[str, Any]]:
+    """Rezepte mit sehr ähnlichem Titel (für Hinweise beim Foto-Import)."""
+    key = _title_key(title)
+    if len(key) < 3:
+        return []
+    scored: list[tuple[float, dict[str, Any]]] = []
+    for row in conn.execute("SELECT id, title FROM recipes"):
+        other = _title_key(row["title"])
+        if not other:
+            continue
+        score = 1.0 if other == key else SequenceMatcher(None, key, other).ratio()
+        if score >= threshold:
+            scored.append((score, {"id": row["id"], "title": row["title"], "score": round(score, 2)}))
+    scored.sort(key=lambda s: -s[0])
+    return [item for _, item in scored[:limit]]

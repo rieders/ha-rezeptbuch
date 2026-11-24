@@ -1,0 +1,22 @@
+{
+  "conversation_id": "test-unleserlich",
+  "data": {
+    "title": "Omas Nusszopf",
+    "servings": "[unleserlich]",
+    "prep_time": "",
+    "cook_time": "1 Std.",
+    "total_time": "",
+    "ingredients": [
+      "500 g Mehl",
+      "[unleserlich] g Butter",
+      "200 g gemahlene Haselnüsse",
+      "1 Ei"
+    ],
+    "steps": [
+      "Teig kneten und 1 Std. ruhen lassen.",
+      "Füllung aus Nüssen und [unleserlich] verrühren, Zopf flechten.",
+      "Backen."
+    ],
+    "category": ""
+  }
+}

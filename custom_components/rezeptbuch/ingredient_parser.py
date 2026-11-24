@@ -145,6 +145,9 @@ def parse_number(text: str) -> float | None:
         return None
 
 
+UNREADABLE = "[unleserlich]"
+KEEP_BRACKETS = frozenset({"?", "unleserlich"})
+
 _PLURAL_MARKER_RE = re.compile(r"(?<=[A-Za-zÄÖÜäöüß])\((?:n|en|e|er|s|es|nen)\)", re.IGNORECASE)
 
 
@@ -160,7 +163,12 @@ def _extract_parens(text: str) -> tuple[str, list[str]]:
         return " "
 
     text = re.sub(r"\(([^()]*)\)", _collect, text)
-    text = re.sub(r"\[([^\[\]]*)\]", lambda m: m.group(0) if m.group(1) == "?" else _collect(m), text)
+    # "[?]" und "[unleserlich]" (Foto-Import) bleiben im Text stehen
+    text = re.sub(
+        r"\[([^\[\]]*)\]",
+        lambda m: m.group(0) if m.group(1).strip().lower() in KEEP_BRACKETS else _collect(m),
+        text,
+    )
     return re.sub(r"\s+", " ", text).strip(), notes
 
 

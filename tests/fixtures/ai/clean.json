@@ -1,0 +1,26 @@
+{
+  "conversation_id": "test-clean",
+  "data": {
+    "title": "Zwetschgenkuchen vom Blech",
+    "servings": "1 Blech (ca. 20 Stück)",
+    "prep_time": "30 Min.",
+    "cook_time": "ca. 40 Minuten",
+    "total_time": "",
+    "ingredients": [
+      "400 g Mehl",
+      "1 Würfel Hefe",
+      "200 ml lauwarme Milch",
+      "60 g Zucker",
+      "1 Prise Salz",
+      "2 kg Zwetschgen",
+      "1 TL Zimt"
+    ],
+    "steps": [
+      "1. Hefe in der Milch auflösen und mit Mehl, Zucker und Salz zu einem Teig kneten.",
+      "2. Den Teig zugedeckt 45 Minuten gehen lassen.",
+      "3. Zwetschgen entsteinen, den Teig auf dem Blech ausrollen und dicht belegen.",
+      "4. Bei 200 °C etwa 35–40 Minuten backen, mit Zimt bestreuen."
+    ],
+    "category": "Kuchen"
+  }
+}
