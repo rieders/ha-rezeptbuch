@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Rezeptbuch-Icon: aufgeschlagenes Buch mit Kochmütze. Eigene Grafik, MIT-Lizenz.
+     Quelle für custom_components/rezeptbuch/brand/icon.png (256 px) und icon@2x.png (512 px).
+     Neu rendern: siehe assets/brand/README.md -->
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <title>Rezeptbuch</title>
+  <!-- Hintergrund: abgerundetes Quadrat, randlos (Icon ist "getrimmt") -->
+  <rect x="0" y="0" width="512" height="512" rx="112" fill="#E8590C"/>
+
+  <!-- Kochmütze -->
+  <g fill="#FFFFFF">
+    <circle cx="190" cy="148" r="56"/>
+    <circle cx="256" cy="116" r="66"/>
+    <circle cx="322" cy="148" r="56"/>
+    <rect x="178" y="150" width="156" height="58"/>
+    <rect x="178" y="204" width="156" height="36" rx="10"/>
+  </g>
+  <!-- Falz zwischen Mütze und Krempe -->
+  <rect x="178" y="200" width="156" height="8" fill="#E8590C"/>
+  <!-- Plissee-Falten der Mütze -->
+  <g stroke="#F6C6A4" stroke-width="8" stroke-linecap="round">
+    <line x1="222" y1="168" x2="222" y2="196"/>
+    <line x1="256" y1="160" x2="256" y2="196"/>
+    <line x1="290" y1="168" x2="290" y2="196"/>
+  </g>
+
+  <!-- Aufgeschlagenes Buch -->
+  <g fill="#FFFFFF">
+    <path d="M256 418 C 214 388, 152 378, 84 386 L 84 270 C 152 262, 214 272, 256 302 Z"/>
+    <path d="M256 418 C 298 388, 360 378, 428 386 L 428 270 C 360 262, 298 272, 256 302 Z"/>
+  </g>
+  <!-- Buchrücken -->
+  <line x1="256" y1="304" x2="256" y2="414" stroke="#E8590C" stroke-width="8" stroke-linecap="round"/>
+  <!-- Textzeilen (Rezept) -->
+  <g fill="none" stroke="#F6C6A4" stroke-width="10" stroke-linecap="round">
+    <path d="M118 306 C 158 302, 196 306, 228 320"/>
+    <path d="M118 340 C 158 336, 196 340, 228 354"/>
+    <path d="M394 306 C 354 302, 316 306, 284 320"/>
+    <path d="M394 340 C 354 336, 316 340, 284 354"/>
+  </g>
+</svg>
