@@ -1,0 +1,4 @@
+# Gleiche Versionen wie in der lokalen Testumgebung (Python 3.14, HA 2026.10.4)
+pytest-homeassistant-custom-component==0.13.375
+recipe-scrapers==15.14.0
+ruff==0.17.6

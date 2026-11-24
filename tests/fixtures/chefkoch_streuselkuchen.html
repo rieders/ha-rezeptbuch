@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<!-- Test-Fixture: Nachbildung NUR der Seitenstruktur von chefkoch.de (Stand 11/2026).
+     Übernommen sind ausschließlich strukturelle Eigenheiten des JSON-LD:
+     @graph mit @id-Verweisen (Bild, Autor), HowToSection "Zubereitung",
+     recipeYield als Liste, Titel mit Anhang " von <Autor>", Zutatenzeilen im
+     Chefkoch-Format ("Ei(er)", "Prise(n)", "TL, gestr.", "(z. B. …)", "evtl. … (oder …)").
+     Rezept, Texte, Zutaten, Rezept-ID und Autor sind frei erfunden; nur die
+     Bild-URL entspricht dem echten URL-Schema des Bild-CDNs. -->
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Birnen-Streuselkuchen vom Blech von testkoch | Chefkoch</title>
+<link rel="canonical" href="https://www.chefkoch.de/rezepte/1234567890123456/Birnen-Streuselkuchen-vom-Blech.html">
+<meta property="og:image" content="https://img.chefkoch-cdn.de/rezepte/1108101216891426/bilder/668306/crop-960x540/apfelkuchen.jpg">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Recipe",
+      "@id": "https://www.chefkoch.de/rezepte/1234567890123456/Birnen-Streuselkuchen-vom-Blech.html#recipe",
+      "inLanguage": "de",
+      "recipeCategory": "Backen",
+      "author": {"@id": "https://www.chefkoch.de/user/profil/test0001#author"},
+      "name": "Birnen-Streuselkuchen vom Blech von testkoch",
+      "description": "Testrezept: Blechkuchen mit Birnen, Schmand und Streuseln.",
+      "mainEntityOfPage": {"@id": "https://www.chefkoch.de/rezepte/1234567890123456/Birnen-Streuselkuchen-vom-Blech.html"},
+      "image": {"@id": "https://www.chefkoch.de/rezepte/1234567890123456/Birnen-Streuselkuchen-vom-Blech.html#primaryimage"},
+      "prepTime": "PT30M",
+      "cookTime": "PT45M",
+      "totalTime": "PT1H15M",
+      "recipeYield": ["1", "1 Portionen"],
+      "keywords": "Vegetarisch, Herbst, Kuchen, Obst, Einfach",
+      "recipeInstructions": [
+        {
+          "@type": "HowToSection",
+          "name": "Zubereitung",
+          "itemListElement": [
+            {"@type": "HowToStep", "position": 1, "text": "Testschritt eins: Boden aus Mehl, Butter, Zucker, Ei und Backpulver herstellen. "},
+            {"@type": "HowToStep", "position": 2, "text": "Testschritt zwei: Birnen würfeln, mit Schmand mischen und verteilen. "},
+            {"@type": "HowToStep", "position": 3, "text": "Testschritt drei: Streusel aus den restlichen Zutaten darüber geben. "},
+            {"@type": "HowToStep", "position": 4, "text": "Testschritt vier: ca. 40 - 45 Minuten backen."}
+          ]
+        }
+      ],
+      "recipeIngredient": [
+        "250 g Mehl",
+        "150 g Butter",
+        "80 g Zucker",
+        "1 Ei(er)",
+        "1 Pck. Backpulver",
+        "5 Birne(n) (z. B. Williams)",
+        "200 g Schmand",
+        "150 g Butter",
+        "200 g Mehl",
+        "100 g Zucker",
+        "1 TL, gestr. Zimt",
+        "1 Prise(n) Salz",
+        "evtl. Haselnüsse (oder Mandeln)"
+      ]
+    },
+    {
+      "@type": "ImageObject",
+      "@id": "https://www.chefkoch.de/rezepte/1234567890123456/Birnen-Streuselkuchen-vom-Blech.html#primaryimage",
+      "url": "https://img.chefkoch-cdn.de/rezepte/1108101216891426/bilder/668306/crop-960x540/apfelkuchen.jpg",
+      "contentUrl": "https://img.chefkoch-cdn.de/rezepte/1108101216891426/bilder/668306/crop-960x540/apfelkuchen.jpg",
+      "width": 960,
+      "height": 540
+    },
+    {"@type": "Person", "@id": "https://www.chefkoch.de/user/profil/test0001#author", "name": "testkoch"},
+    {"@type": "WebSite", "@id": "https://www.chefkoch.de/#website", "url": "https://www.chefkoch.de/", "name": "Chefkoch"}
+  ]
+}
+</script>
+</head>
+<body><h1>Birnen-Streuselkuchen vom Blech</h1></body>
+</html>

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<!-- Fiktiver Food-Blog (WordPress mit Rezept-Plugin): JSON-LD in @graph,
+     Bilder als Liste mit Breiten, Zutaten-Gruppen über HowToSection-ähnliche
+     Überschriften in recipeIngredient, keywords als String, recipeCategory als Liste. -->
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<title>Rote Linsensuppe mit Kokos – Mein Küchenblog</title>
+<link rel="canonical" href="https://www.mein-kuechenblog.de/rote-linsensuppe/">
+<meta property="og:site_name" content="Mein Küchenblog">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@graph":[
+ {"@type":"Article","@id":"https://www.mein-kuechenblog.de/rote-linsensuppe/#article","headline":"Rote Linsensuppe"},
+ {"@type":"Recipe","@id":"https://www.mein-kuechenblog.de/rote-linsensuppe/#recipe",
+  "name":"Rote Linsensuppe mit Kokosmilch",
+  "author":{"@type":"Person","name":"Mia Beispiel"},
+  "description":"Wärmende Suppe mit roten Linsen, Ingwer und Kokosmilch &amp; Limette.",
+  "image":[
+    {"@type":"ImageObject","url":"https://www.mein-kuechenblog.de/wp-content/uploads/linsensuppe-300x300.jpg","width":300,"height":300},
+    {"@type":"ImageObject","url":"https://www.mein-kuechenblog.de/wp-content/uploads/linsensuppe.jpg","width":1200,"height":800}
+  ],
+  "recipeYield":["4","4 Personen"],
+  "prepTime":"PT15M","cookTime":"PT25M","totalTime":"PT40M",
+  "recipeCategory":["Hauptgericht","Suppe"],
+  "recipeCuisine":["Indisch"],
+  "keywords":"Linsen, vegan, schnell, Meal Prep",
+  "recipeIngredient":[
+    "1 Zwiebel",
+    "2 Zehen Knoblauch",
+    "1 Stück Ingwer (ca. 3 cm)",
+    "2 EL Olivenöl",
+    "250 g rote Linsen",
+    "1 l Gemüsebrühe",
+    "1 Dose Kokosmilch (400 ml)",
+    "½ TL Kurkuma",
+    "1 Limette, nur Saft",
+    "Salz und Pfeffer"
+  ],
+  "recipeInstructions":[
+    {"@type":"HowToStep","text":"Zwiebel, Knoblauch und Ingwer fein hacken und im Öl 3–4 Minuten andünsten."},
+    {"@type":"HowToStep","text":"Linsen, Kurkuma und Brühe zugeben und zugedeckt etwa 20 Minuten köcheln lassen."},
+    {"@type":"HowToStep","text":"Kokosmilch einrühren, pürieren und mit Limettensaft, Salz und Pfeffer abschmecken."}
+  ]
+ },
+ {"@type":"WebSite","@id":"https://www.mein-kuechenblog.de/#website","name":"Mein Küchenblog"}
+]}
+</script>
+</head>
+<body><article><h1>Rote Linsensuppe</h1><p>Heute gibt es Suppe …</p></article></body>
+</html>
