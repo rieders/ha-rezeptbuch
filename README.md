@@ -5,9 +5,8 @@
 [![HACS Custom](https://img.shields.io/badge/HACS-Custom-41BDF5.svg)](https://hacs.xyz/docs/faq/custom_repositories)
 
 > [!WARNING]
-> **In Entwicklung.** Die Integration ist noch nicht einsatzbereit: Einrichtung über die
-> Oberfläche, Aktionen, Entitäten und das Panel folgen in den nächsten Schritten.
-> Datenformat und Funktionen können sich noch ändern.
+> **In Entwicklung.** Einrichtung, Aktionen und Entitäten funktionieren bereits; das Panel
+> „Rezepte“ in der Seitenleiste folgt noch. Datenformat und Funktionen können sich ändern.
 
 **Rezeptbuch** ist eine eigenständige Rezeptdatenbank direkt in Home Assistant – ohne
 externe Dienste wie Mealie und ohne separates Add-on. Rezepte lassen sich per URL von
@@ -19,32 +18,56 @@ Abänderungen und hierarchische Kategorien gehören dazu. Die Oberfläche ist de
 
 ## Funktionen
 
-### Bereits umgesetzt (Kern, noch ohne Oberfläche)
+### Bereits umgesetzt
 
-- **Datenbank** (SQLite unter `/config/rezeptbuch/`) mit Migrationen
-- **Versionen:** Das Original bleibt immer unverändert; Änderungen werden als neue
-  Version gespeichert, mit Diff-Ansicht („Zucker 200 g → 150 g“), Standardversion
-  und „Zurück zum Original“
-- **Inline-Notizen** an Zutaten und Schritten, ohne neue Version
-- **Bewertungen** 0,5–5 Sterne pro Kochvorgang, getrennt nach HA-Benutzern
-- **Hierarchische Kategorien** beliebiger Tiefe, mit Zyklusschutz, Zählung inklusive
-  Unterkategorien und Standardbaum (Kochen, Backen, Getränke)
-- **Volltextsuche** über Titel, Zutaten, Tags und Kategorien
-- **Deutscher Zutaten-Parser** („1½ TL Zimt“, „2–3 Zwiebeln“, „1 Pck. Backpulver“,
-  „etwas Pfeffer“, „1 Prise(n) Salz“ …) und Timer-Erkennung in Schritten („ca. 45 Min.“)
-- **Einheiten-Umrechnung** für die Einkaufsliste (g/kg, ml/l, TL/EL); „Prise“ und
-  „etwas“ werden nicht addiert
+- **Einrichtung über die Oberfläche** (optional mit Standard-Kategorien) und **Optionen**:
+  KI-Entität für den Foto-Import, Standard-Portionen, Speicherpfad, „Private
+  Netzwerkadressen erlauben“, Kategorie-Filter und Gewichtung für „Rezept des Tages“,
+  eigene Ideen-Sensoren (z. B. „Backidee der Woche“)
 - **URL-Import** über recipe-scrapers und schema.org/JSON-LD; Ergebnis zuerst als
-  Entwurf zur Korrektur, mit Duplikaterkennung, lokal gespeichertem Bild und
-  lernender Kategorie-Zuordnung
-- **Sicherheit beim Abruf:** Timeout, Größenlimit, Schutz vor Zugriffen auf private
-  bzw. lokale Adressen (SSRF)
+  Entwurf zur Korrektur (oder direkt übernehmen), mit Duplikaterkennung, lokal
+  gespeichertem Bild und lernender Kategorie-Zuordnung
+- **Foto-Import** über `ai_task`: Kochbuchseiten oder handgeschriebene Karteikarten,
+  auch mehrere Seiten; unleserliche Stellen werden markiert
+- **Versionen:** Das Original bleibt immer unverändert; Änderungen werden als neue
+  Version gespeichert, mit Diff („Zucker 200 g → 150 g“) und „Zurück zum Original“
+- **Inline-Notizen**, **Bewertungen** (0,5–5 Sterne, getrennt nach HA-Benutzern)
+- **Hierarchische Kategorien** beliebiger Tiefe mit Zyklusschutz; **Volltextsuche**
+- **Deutscher Zutaten-Parser** („1½ TL Zimt“, „2–3 Zwiebeln“, „1 Prise(n) Salz“ …)
+  und Timer-Erkennung in Schritten („ca. 45 Min.“)
+- **Einkaufsliste** mit Zusammenfassen (500 g + 1 kg Mehl → 1,5 kg; TL/EL);
+  „Prise“ und „etwas“ werden nicht addiert
+- **Aufräumen** einmal täglich: alte Entwürfe (> 14 Tage) und verwaiste Bilder
+- **Sicherheit beim Abruf:** Timeout, Größenlimit, Schutz vor Zugriffen auf
+  lokale/private Adressen (SSRF)
+
+### Entitäten
+
+| Entität | Inhalt |
+|---|---|
+| `sensor.rezeptbuch_anzahl_rezepte` | Anzahl Rezepte; Attribute: Anzahl je Hauptkategorie |
+| `sensor.rezeptbuch_rezept_des_tages` | Täglich neu, bevorzugt gut bewertete und lange nicht gekochte Rezepte |
+| `sensor.rezeptbuch_idee_…` | Eigene Ideen-Sensoren je Kategorie (täglich oder wöchentlich) |
+| `todo.rezeptbuch_einkaufsliste` | Einkaufsliste |
+
+### Aktionen
+
+`rezeptbuch.import_url`, `import_image`, `confirm_draft`, `discard_draft`, `search`,
+`get_recipe`, `random_recipe`, `rate_recipe`, `add_to_shopping_list`, `create_category`,
+`assign_category`, `delete_recipe` – mit Rückgabewerten (z. B. `recipe_id`, `draft_id`)
+für Automationen.
+
+```yaml
+# Beispiel: Rezept-URL importieren und direkt speichern
+action: rezeptbuch.import_url
+data:
+  url: "https://www.chefkoch.de/rezepte/…"
+  confirm: true
+response_variable: ergebnis
+```
 
 ### Geplant
 
-- Foto-Import über `ai_task` (gedruckt und handschriftlich, mehrere Seiten)
-- Einrichtung und Optionen über die Oberfläche, Aktionen (`rezeptbuch.import_url` …)
-- Sensoren „Anzahl Rezepte“, „Rezept des Tages“, Ideen-Sensoren, Einkaufsliste als `todo`-Entität
 - Angebote (Aldi, Lidl & Co.) für die Einkaufsliste, Preisalarm
 - Panel „Rezepte“ in der Seitenleiste: Kategoriebaum, Suche und Filter, Editor,
   Kochmodus fürs Küchen-Tablet
@@ -68,8 +91,7 @@ HA 2026.2.3 (Python 3.13) und HA 2026.10.4 (Python 3.14).
    `<config>/custom_components/rezeptbuch` kopieren
 2. Home Assistant neu starten
 
-> Die Einrichtung unter *Einstellungen → Geräte & Dienste* ist erst ab der nächsten
-> Entwicklungsstufe möglich.
+Danach unter *Einstellungen → Geräte & Dienste → Integration hinzufügen* „Rezeptbuch“ wählen.
 
 ## Datenschutz
 

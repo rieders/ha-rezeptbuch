@@ -3,19 +3,13 @@
   "name": "Rezeptbuch",
   "after_dependencies": [
     "ai_task",
-    "todo"
+    "media_source"
   ],
   "codeowners": [
     "@rieders"
   ],
-  "config_flow": false,
-  "dependencies": [
-    "http",
-    "frontend",
-    "panel_custom",
-    "websocket_api",
-    "media_source"
-  ],
+  "config_flow": true,
+  "dependencies": [],
   "documentation": "https://github.com/rieders/ha-rezeptbuch",
   "integration_type": "service",
   "iot_class": "calculated",
@@ -23,5 +17,6 @@
   "requirements": [
     "recipe-scrapers==15.14.0"
   ],
+  "single_config_entry": true,
   "version": "0.1.0"
 }

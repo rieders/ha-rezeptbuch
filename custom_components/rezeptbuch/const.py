@@ -22,11 +22,31 @@ CONF_RATING_WEIGHT: Final = "rating_weight"
 CONF_RECENCY_WEIGHT: Final = "recency_weight"
 CONF_IDEA_SENSORS: Final = "idea_sensors"
 CONF_ALLOW_PRIVATE_NETWORKS: Final = "allow_private_networks"
+# Marker in entry.data: Standardbaum wurde bereits angelegt (nur beim ersten Setup)
+DATA_DEFAULT_CATEGORIES_CREATED: Final = "default_categories_created"
+
+# Ideen-Sensoren (Options-Flow): Liste von {"id", "name", "category_id", "period"}
+IDEA_ID: Final = "id"
+IDEA_NAME: Final = "name"
+IDEA_CATEGORY_ID: Final = "category_id"
+IDEA_PERIOD: Final = "period"
+PERIOD_DAILY: Final = "daily"
+PERIOD_WEEKLY: Final = "weekly"
+PERIODS: Final = (PERIOD_DAILY, PERIOD_WEEKLY)
 
 DEFAULT_SERVINGS: Final = 4
 DEFAULT_RATING_WEIGHT: Final = 2.0
 DEFAULT_RECENCY_WEIGHT: Final = 1.0
 DEFAULT_ALLOW_PRIVATE_NETWORKS: Final = False
+
+# Zeitsteuerung
+CLEANUP_FIRST_RUN_DELAY: Final = 15 * 60  # Sekunden nach dem Start
+CLEANUP_HOUR: Final = 3
+CLEANUP_MINUTE: Final = 30
+
+# Signale / URLs
+SIGNAL_SHOPPING_UPDATED: Final = f"{DOMAIN}_shopping_updated"
+IMAGE_URL_PREFIX: Final = f"/api/{DOMAIN}/image/"
 
 # Quellen / Arten
 SOURCE_URL: Final = "url"

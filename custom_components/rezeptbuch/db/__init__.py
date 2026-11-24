@@ -90,6 +90,7 @@ class Database:
         self.path = path
         self._executor = ThreadPoolExecutor(max_workers=1, thread_name_prefix="rezeptbuch_db")
         self._conn: sqlite3.Connection | None = None
+        self._closed = False
 
     @property
     def conn(self) -> sqlite3.Connection:
@@ -119,8 +120,16 @@ class Database:
 
         return await self._submit(_call)
 
+    @property
+    def closed(self) -> bool:
+        """True nach async_close."""
+        return self._closed
+
     async def async_close(self) -> None:
-        """Verbindung schließen und Executor beenden."""
+        """Verbindung schließen und den DB-Thread beenden (mehrfach aufrufbar)."""
+        if self._closed:
+            return
+        self._closed = True
 
         def _close() -> None:
             if self._conn is not None:
@@ -133,4 +142,7 @@ class Database:
         try:
             await self._submit(_close)
         finally:
-            self._executor.shutdown(wait=False)
+            # Auf das Ende des DB-Threads warten – im Executor, nicht in der Eventloop
+            await asyncio.get_running_loop().run_in_executor(
+                None, functools.partial(self._executor.shutdown, wait=True)
+            )

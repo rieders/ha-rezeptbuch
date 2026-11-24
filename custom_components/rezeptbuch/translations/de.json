@@ -1,4 +1,381 @@
 {
+  "config": {
+    "step": {
+      "user": {
+        "title": "Rezeptbuch einrichten",
+        "description": "Die Rezepte werden lokal unter /config/rezeptbuch gespeichert.",
+        "data": {
+          "create_default_categories": "Standard-Kategorien anlegen"
+        },
+        "data_description": {
+          "create_default_categories": "Kochen, Backen und Getränke mit Unterkategorien. Kann später geändert werden."
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Das Rezeptbuch ist bereits eingerichtet."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Rezeptbuch-Optionen",
+        "menu_options": {
+          "general": "Allgemein",
+          "daily": "Rezept des Tages",
+          "idea_add": "Ideen-Sensor hinzufügen",
+          "idea_remove": "Ideen-Sensoren entfernen"
+        }
+      },
+      "general": {
+        "title": "Allgemein",
+        "data": {
+          "ai_task_entity": "KI-Entität für den Foto-Import",
+          "default_servings": "Standard-Portionen",
+          "storage_path": "Speicherpfad",
+          "allow_private_networks": "Private Netzwerkadressen erlauben"
+        },
+        "data_description": {
+          "ai_task_entity": "Leer lassen, um die in Home Assistant als Standard gesetzte KI zu verwenden.",
+          "default_servings": "Für manuell erfasste Rezepte.",
+          "storage_path": "Relativ zum Konfigurationsordner. Vorhandene Daten werden beim Ändern NICHT verschoben.",
+          "allow_private_networks": "Erlaubt den URL-Import aus dem lokalen Netz (z. B. Mealie, Tandoor). localhost bleibt immer gesperrt."
+        }
+      },
+      "daily": {
+        "title": "Rezept des Tages",
+        "data": {
+          "daily_category_ids": "Nur aus diesen Kategorien",
+          "rating_weight": "Gewichtung Bewertung",
+          "recency_weight": "Gewichtung lange nicht gekocht"
+        },
+        "data_description": {
+          "daily_category_ids": "Leer = alle Rezepte. Unterkategorien zählen mit.",
+          "rating_weight": "0 = egal, höher = gut bewertete Rezepte bevorzugen.",
+          "recency_weight": "0 = egal, höher = lange nicht gekochte Rezepte bevorzugen."
+        }
+      },
+      "idea_add": {
+        "title": "Ideen-Sensor hinzufügen",
+        "description": "Zum Beispiel „Backidee der Woche“ aus der Kategorie Backen.",
+        "data": {
+          "name": "Name",
+          "category_id": "Kategorie",
+          "period": "Wechsel"
+        }
+      },
+      "idea_remove": {
+        "title": "Ideen-Sensoren entfernen",
+        "data": {
+          "ideas": "Zu entfernende Sensoren"
+        }
+      }
+    },
+    "error": {
+      "invalid_path": "Bitte einen Ordner relativ zum Konfigurationsordner angeben (ohne „..“).",
+      "name_required": "Bitte einen Namen angeben.",
+      "name_exists": "Diesen Namen gibt es schon."
+    },
+    "abort": {
+      "no_categories": "Es gibt noch keine Kategorien.",
+      "no_ideas": "Es gibt keine Ideen-Sensoren."
+    }
+  },
+  "selector": {
+    "period": {
+      "options": {
+        "daily": "täglich",
+        "weekly": "wöchentlich"
+      }
+    },
+    "sort": {
+      "options": {
+        "name": "Name",
+        "rating": "Bewertung",
+        "last_cooked": "Zuletzt gekocht",
+        "least_recently_cooked": "Am längsten nicht gekocht",
+        "new": "Neueste",
+        "relevance": "Relevanz"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "recipe_count": {
+        "name": "Anzahl Rezepte"
+      },
+      "daily_recipe": {
+        "name": "Rezept des Tages"
+      }
+    },
+    "todo": {
+      "shopping_list": {
+        "name": "Einkaufsliste"
+      }
+    }
+  },
+  "services": {
+    "import_url": {
+      "name": "Rezept von URL importieren",
+      "description": "Liest ein Rezept von einer Webseite und legt einen Entwurf an (oder speichert es direkt).",
+      "fields": {
+        "url": {
+          "name": "URL",
+          "description": "Adresse der Rezeptseite."
+        },
+        "category_ids": {
+          "name": "Kategorie-IDs",
+          "description": "IDs der Kategorien, z. B. [3, 7]."
+        },
+        "tags": {
+          "name": "Tags",
+          "description": "Freie Schlagworte."
+        },
+        "confirm": {
+          "name": "Direkt übernehmen",
+          "description": "Entwurf ohne Vorschau sofort als Rezept speichern."
+        },
+        "allow_duplicate": {
+          "name": "Duplikat erlauben",
+          "description": "Auch importieren, wenn die Quelle schon vorhanden ist."
+        }
+      }
+    },
+    "import_image": {
+      "name": "Rezept von Foto importieren",
+      "description": "Erkennt ein Rezept auf Fotos (Kochbuch, Karteikarte) per KI und legt einen Entwurf an.",
+      "fields": {
+        "files": {
+          "name": "Dateien",
+          "description": "Pfade zu Bilddateien (in erlaubten Ordnern, z. B. /config/www)."
+        },
+        "media": {
+          "name": "Medien",
+          "description": "Bilder aus der Medienbibliothek."
+        },
+        "category_ids": {
+          "name": "Kategorie-IDs",
+          "description": "IDs der Kategorien, z. B. [3, 7]."
+        },
+        "tags": {
+          "name": "Tags",
+          "description": "Freie Schlagworte."
+        },
+        "confirm": {
+          "name": "Direkt übernehmen",
+          "description": "Entwurf ohne Vorschau sofort als Rezept speichern."
+        }
+      }
+    },
+    "confirm_draft": {
+      "name": "Entwurf übernehmen",
+      "description": "Speichert einen Import-Entwurf als Rezept (Version 1 „Original“).",
+      "fields": {
+        "draft_id": {
+          "name": "Entwurfs-ID",
+          "description": "ID des Import-Entwurfs."
+        },
+        "title": {
+          "name": "Titel",
+          "description": "Abweichender Titel."
+        },
+        "category_ids": {
+          "name": "Kategorie-IDs",
+          "description": "IDs der Kategorien, z. B. [3, 7]."
+        },
+        "tags": {
+          "name": "Tags",
+          "description": "Freie Schlagworte."
+        },
+        "allow_duplicate": {
+          "name": "Duplikat erlauben",
+          "description": "Auch importieren, wenn die Quelle schon vorhanden ist."
+        }
+      }
+    },
+    "discard_draft": {
+      "name": "Entwurf verwerfen",
+      "description": "Löscht einen Import-Entwurf samt Bildern.",
+      "fields": {
+        "draft_id": {
+          "name": "Entwurfs-ID",
+          "description": "ID des Import-Entwurfs."
+        }
+      }
+    },
+    "search": {
+      "name": "Rezepte suchen",
+      "description": "Sucht Rezepte nach Text, Kategorie, Tags und Bewertung.",
+      "fields": {
+        "query": {
+          "name": "Suchtext",
+          "description": "Sucht in Titel, Zutaten, Tags und Kategorien."
+        },
+        "category_id": {
+          "name": "Kategorie-ID",
+          "description": "Nur Rezepte dieser Kategorie (inkl. Unterkategorien)."
+        },
+        "include_subcategories": {
+          "name": "Unterkategorien einschließen",
+          "description": "Rezepte aus Unterkategorien mitsuchen."
+        },
+        "tags": {
+          "name": "Tags",
+          "description": "Freie Schlagworte."
+        },
+        "min_stars": {
+          "name": "Mindestens Sterne",
+          "description": "Nur Rezepte mit mindestens dieser Durchschnittsbewertung."
+        },
+        "never_cooked": {
+          "name": "Nie gekocht",
+          "description": "Nur Rezepte, die noch nie gekocht wurden."
+        },
+        "not_cooked_days": {
+          "name": "Nicht gekocht seit (Tage)",
+          "description": "Nur Rezepte, die so lange nicht gekocht wurden."
+        },
+        "sort": {
+          "name": "Sortierung",
+          "description": "Reihenfolge der Treffer."
+        },
+        "limit": {
+          "name": "Anzahl",
+          "description": "Maximale Anzahl Treffer."
+        }
+      }
+    },
+    "get_recipe": {
+      "name": "Rezept abrufen",
+      "description": "Liefert ein Rezept mit Zutaten und Schritten, optional auf Portionen umgerechnet.",
+      "fields": {
+        "recipe_id": {
+          "name": "Rezept-ID",
+          "description": "ID des Rezepts."
+        },
+        "version_id": {
+          "name": "Versions-ID",
+          "description": "Bestimmte Version statt der Standardversion."
+        },
+        "servings": {
+          "name": "Portionen",
+          "description": "Auf diese Portionenzahl umrechnen."
+        }
+      }
+    },
+    "random_recipe": {
+      "name": "Zufälliges Rezept",
+      "description": "Wählt ein zufälliges Rezept, z. B. für „Was koche ich heute?“.",
+      "fields": {
+        "category_id": {
+          "name": "Kategorie-ID",
+          "description": "Nur Rezepte dieser Kategorie (inkl. Unterkategorien)."
+        },
+        "tags": {
+          "name": "Tags",
+          "description": "Freie Schlagworte."
+        },
+        "min_stars": {
+          "name": "Mindestens Sterne",
+          "description": "Nur Rezepte mit mindestens dieser Durchschnittsbewertung."
+        }
+      }
+    },
+    "rate_recipe": {
+      "name": "Rezept bewerten",
+      "description": "Speichert eine Bewertung und/oder einen Kochvorgang.",
+      "fields": {
+        "recipe_id": {
+          "name": "Rezept-ID",
+          "description": "ID des Rezepts."
+        },
+        "stars": {
+          "name": "Sterne",
+          "description": "0,5 bis 5 Sterne in halben Schritten."
+        },
+        "comment": {
+          "name": "Kommentar",
+          "description": "Freitext zur Bewertung."
+        },
+        "cooked": {
+          "name": "Gekocht",
+          "description": "Als Kochvorgang zählen (sonst nur Bewertung)."
+        },
+        "servings": {
+          "name": "Portionen",
+          "description": "Auf diese Portionenzahl umrechnen."
+        }
+      }
+    },
+    "add_to_shopping_list": {
+      "name": "Auf die Einkaufsliste",
+      "description": "Setzt die Zutaten eines Rezepts auf die Einkaufsliste.",
+      "fields": {
+        "recipe_id": {
+          "name": "Rezept-ID",
+          "description": "ID des Rezepts."
+        },
+        "servings": {
+          "name": "Portionen",
+          "description": "Auf diese Portionenzahl umrechnen."
+        },
+        "todo_entity": {
+          "name": "Liste",
+          "description": "Andere To-do-Liste statt der Rezeptbuch-Einkaufsliste."
+        }
+      }
+    },
+    "create_category": {
+      "name": "Kategorie anlegen",
+      "description": "Legt eine (Unter-)Kategorie an.",
+      "fields": {
+        "name": {
+          "name": "Name",
+          "description": "Name der Kategorie."
+        },
+        "parent_id": {
+          "name": "Übergeordnete Kategorie",
+          "description": "ID der übergeordneten Kategorie."
+        },
+        "icon": {
+          "name": "Symbol",
+          "description": "MDI-Symbol, z. B. mdi:cake."
+        },
+        "color": {
+          "name": "Farbe",
+          "description": "Farbe als Hex-Wert."
+        }
+      }
+    },
+    "assign_category": {
+      "name": "Kategorien zuweisen",
+      "description": "Ordnet ein Rezept Kategorien zu.",
+      "fields": {
+        "recipe_id": {
+          "name": "Rezept-ID",
+          "description": "ID des Rezepts."
+        },
+        "category_ids": {
+          "name": "Kategorie-IDs",
+          "description": "IDs der Kategorien, z. B. [3, 7]."
+        },
+        "replace": {
+          "name": "Ersetzen",
+          "description": "Bisherige Kategorien ersetzen statt ergänzen."
+        }
+      }
+    },
+    "delete_recipe": {
+      "name": "Rezept löschen",
+      "description": "Löscht ein Rezept mit allen Versionen, Bewertungen und Bildern.",
+      "fields": {
+        "recipe_id": {
+          "name": "Rezept-ID",
+          "description": "ID des Rezepts."
+        }
+      }
+    }
+  },
   "exceptions": {
     "unknown_error": {
       "message": "Unbekannter Fehler im Rezeptbuch."
@@ -38,6 +415,24 @@
     },
     "no_photos": {
       "message": "Bitte mindestens ein Foto auswählen (höchstens 10)."
+    },
+    "not_loaded": {
+      "message": "Das Rezeptbuch ist nicht geladen."
+    },
+    "not_found": {
+      "message": "Nicht gefunden: {message}"
+    },
+    "conflict": {
+      "message": "Konflikt: {message}"
+    },
+    "invalid_input": {
+      "message": "Ungültige Eingabe: {message}"
+    },
+    "path_not_allowed": {
+      "message": "Zugriff auf {path} ist nicht erlaubt oder die Datei ist nicht lesbar (allowlist_external_dirs)."
+    },
+    "media_not_local": {
+      "message": "Das Medium {media} ist keine lokale Bilddatei."
     }
   }
 }

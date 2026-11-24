@@ -2,13 +2,18 @@
 
 from __future__ import annotations
 
-from collections.abc import Iterator
+from collections.abc import AsyncIterator, Iterator
 from pathlib import Path
 import sqlite3
 import sys
+from typing import Any
 
+from homeassistant.config_entries import ConfigEntryState
+from homeassistant.core import HomeAssistant
 import pytest
+from pytest_homeassistant_custom_component.common import MockConfigEntry
 
+from custom_components.rezeptbuch.const import CONF_CREATE_DEFAULT_CATEGORIES, DOMAIN
 from custom_components.rezeptbuch.db import connect, transaction
 
 if sys.platform == "win32":
@@ -55,3 +60,30 @@ def tx(conn: sqlite3.Connection):
             return func(conn, *args, **kwargs)
 
     return _run
+
+
+# --- Integration (Config Entry) ---------------------------------------------------------
+
+
+@pytest.fixture
+def entry_options() -> dict[str, Any]:
+    """Optionen für rb_entry (in Tests überschreibbar)."""
+    return {}
+
+
+@pytest.fixture
+async def rb_entry(
+    hass: HomeAssistant, tmp_path: Path, enable_custom_integrations: None, entry_options: dict[str, Any]
+) -> AsyncIterator[MockConfigEntry]:
+    """Eingerichtetes Rezeptbuch mit Standard-Kategorien; Konfig-Ordner = tmp_path."""
+    hass.config.config_dir = str(tmp_path)
+    entry = MockConfigEntry(
+        domain=DOMAIN, title="Rezeptbuch", data={CONF_CREATE_DEFAULT_CATEGORIES: True}, options=entry_options
+    )
+    entry.add_to_hass(hass)
+    assert await hass.config_entries.async_setup(entry.entry_id)
+    await hass.async_block_till_done()
+    yield entry
+    if entry.state is ConfigEntryState.LOADED:
+        assert await hass.config_entries.async_unload(entry.entry_id)
+        await hass.async_block_till_done()

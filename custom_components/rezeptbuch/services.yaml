@@ -1,0 +1,273 @@
+import_url:
+  fields:
+    url:
+      required: true
+      example: "https://www.chefkoch.de/rezepte/…"
+      selector:
+        text:
+          type: url
+    category_ids:
+      selector:
+        object:
+    tags:
+      selector:
+        text:
+          multiple: true
+    confirm:
+      default: false
+      selector:
+        boolean:
+    allow_duplicate:
+      default: false
+      selector:
+        boolean:
+
+import_image:
+  fields:
+    files:
+      example: "/config/www/rezept_seite1.jpg"
+      selector:
+        text:
+          multiple: true
+    media:
+      selector:
+        media:
+          accept:
+            - image/*
+          multiple: true
+    category_ids:
+      selector:
+        object:
+    tags:
+      selector:
+        text:
+          multiple: true
+    confirm:
+      default: false
+      selector:
+        boolean:
+
+confirm_draft:
+  fields:
+    draft_id:
+      required: true
+      selector:
+        number:
+          min: 1
+          mode: box
+    title:
+      selector:
+        text:
+    category_ids:
+      selector:
+        object:
+    tags:
+      selector:
+        text:
+          multiple: true
+    allow_duplicate:
+      default: false
+      selector:
+        boolean:
+
+discard_draft:
+  fields:
+    draft_id:
+      required: true
+      selector:
+        number:
+          min: 1
+          mode: box
+
+search:
+  fields:
+    query:
+      example: "Apfel"
+      selector:
+        text:
+    category_id:
+      selector:
+        number:
+          min: 1
+          mode: box
+    include_subcategories:
+      default: true
+      selector:
+        boolean:
+    tags:
+      selector:
+        text:
+          multiple: true
+    min_stars:
+      selector:
+        number:
+          min: 0.5
+          max: 5
+          step: 0.5
+          mode: slider
+    never_cooked:
+      default: false
+      selector:
+        boolean:
+    not_cooked_days:
+      selector:
+        number:
+          min: 1
+          max: 3650
+          mode: box
+          unit_of_measurement: d
+    sort:
+      default: name
+      selector:
+        select:
+          translation_key: sort
+          options:
+            - name
+            - rating
+            - last_cooked
+            - least_recently_cooked
+            - new
+            - relevance
+    limit:
+      default: 20
+      selector:
+        number:
+          min: 1
+          max: 200
+          mode: box
+
+get_recipe:
+  fields:
+    recipe_id:
+      required: true
+      selector:
+        number:
+          min: 1
+          mode: box
+    version_id:
+      selector:
+        number:
+          min: 1
+          mode: box
+    servings:
+      selector:
+        number:
+          min: 0.25
+          max: 500
+          step: 0.25
+          mode: box
+
+random_recipe:
+  fields:
+    category_id:
+      selector:
+        number:
+          min: 1
+          mode: box
+    tags:
+      selector:
+        text:
+          multiple: true
+    min_stars:
+      selector:
+        number:
+          min: 0.5
+          max: 5
+          step: 0.5
+          mode: slider
+
+rate_recipe:
+  fields:
+    recipe_id:
+      required: true
+      selector:
+        number:
+          min: 1
+          mode: box
+    stars:
+      selector:
+        number:
+          min: 0.5
+          max: 5
+          step: 0.5
+          mode: slider
+    comment:
+      selector:
+        text:
+          multiline: true
+    cooked:
+      default: true
+      selector:
+        boolean:
+    servings:
+      selector:
+        number:
+          min: 0.25
+          max: 500
+          step: 0.25
+          mode: box
+
+add_to_shopping_list:
+  fields:
+    recipe_id:
+      required: true
+      selector:
+        number:
+          min: 1
+          mode: box
+    servings:
+      selector:
+        number:
+          min: 0.25
+          max: 500
+          step: 0.25
+          mode: box
+    todo_entity:
+      selector:
+        entity:
+          domain: todo
+
+create_category:
+  fields:
+    name:
+      required: true
+      selector:
+        text:
+    parent_id:
+      selector:
+        number:
+          min: 1
+          mode: box
+    icon:
+      selector:
+        icon:
+    color:
+      example: "#8d6e63"
+      selector:
+        text:
+
+assign_category:
+  fields:
+    recipe_id:
+      required: true
+      selector:
+        number:
+          min: 1
+          mode: box
+    category_ids:
+      required: true
+      selector:
+        object:
+    replace:
+      default: true
+      selector:
+        boolean:
+
+delete_recipe:
+  fields:
+    recipe_id:
+      required: true
+      selector:
+        number:
+          min: 1
+          mode: box

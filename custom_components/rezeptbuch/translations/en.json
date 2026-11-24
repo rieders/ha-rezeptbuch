@@ -1,4 +1,381 @@
 {
+  "config": {
+    "step": {
+      "user": {
+        "title": "Set up Rezeptbuch",
+        "description": "Recipes are stored locally in /config/rezeptbuch.",
+        "data": {
+          "create_default_categories": "Create default categories"
+        },
+        "data_description": {
+          "create_default_categories": "Cooking, baking and drinks with subcategories. Can be changed later."
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Rezeptbuch is already set up."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Rezeptbuch options",
+        "menu_options": {
+          "general": "General",
+          "daily": "Recipe of the day",
+          "idea_add": "Add idea sensor",
+          "idea_remove": "Remove idea sensors"
+        }
+      },
+      "general": {
+        "title": "General",
+        "data": {
+          "ai_task_entity": "AI entity for photo import",
+          "default_servings": "Default servings",
+          "storage_path": "Storage path",
+          "allow_private_networks": "Allow private network addresses"
+        },
+        "data_description": {
+          "ai_task_entity": "Leave empty to use the AI set as default in Home Assistant.",
+          "default_servings": "For manually entered recipes.",
+          "storage_path": "Relative to the configuration folder. Existing data is NOT moved when changed.",
+          "allow_private_networks": "Allows URL import from the local network (e.g. Mealie, Tandoor). localhost always stays blocked."
+        }
+      },
+      "daily": {
+        "title": "Recipe of the day",
+        "data": {
+          "daily_category_ids": "Only from these categories",
+          "rating_weight": "Rating weight",
+          "recency_weight": "Weight not cooked for a long time"
+        },
+        "data_description": {
+          "daily_category_ids": "Empty = all recipes. Subcategories are included.",
+          "rating_weight": "0 = ignore, higher = prefer well-rated recipes.",
+          "recency_weight": "0 = ignore, higher = prefer recipes not cooked for a long time."
+        }
+      },
+      "idea_add": {
+        "title": "Add idea sensor",
+        "description": "For example “Baking idea of the week” from the baking category.",
+        "data": {
+          "name": "Name",
+          "category_id": "Category",
+          "period": "Changes"
+        }
+      },
+      "idea_remove": {
+        "title": "Remove idea sensors",
+        "data": {
+          "ideas": "Sensors to remove"
+        }
+      }
+    },
+    "error": {
+      "invalid_path": "Please enter a folder relative to the configuration folder (without “..”).",
+      "name_required": "Please enter a name.",
+      "name_exists": "This name already exists."
+    },
+    "abort": {
+      "no_categories": "There are no categories yet.",
+      "no_ideas": "There are no idea sensors."
+    }
+  },
+  "selector": {
+    "period": {
+      "options": {
+        "daily": "daily",
+        "weekly": "weekly"
+      }
+    },
+    "sort": {
+      "options": {
+        "name": "Name",
+        "rating": "Rating",
+        "last_cooked": "Last cooked",
+        "least_recently_cooked": "Least recently cooked",
+        "new": "Newest",
+        "relevance": "Relevance"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "recipe_count": {
+        "name": "Number of recipes"
+      },
+      "daily_recipe": {
+        "name": "Recipe of the day"
+      }
+    },
+    "todo": {
+      "shopping_list": {
+        "name": "Shopping list"
+      }
+    }
+  },
+  "services": {
+    "import_url": {
+      "name": "Import recipe from URL",
+      "description": "Reads a recipe from a web page and creates a draft (or saves it directly).",
+      "fields": {
+        "url": {
+          "name": "URL",
+          "description": "Address of the recipe page."
+        },
+        "category_ids": {
+          "name": "Category IDs",
+          "description": "IDs of the categories, e.g. [3, 7]."
+        },
+        "tags": {
+          "name": "Tags",
+          "description": "Free keywords."
+        },
+        "confirm": {
+          "name": "Confirm immediately",
+          "description": "Save the draft as a recipe right away without preview."
+        },
+        "allow_duplicate": {
+          "name": "Allow duplicate",
+          "description": "Import even if the source already exists."
+        }
+      }
+    },
+    "import_image": {
+      "name": "Import recipe from photo",
+      "description": "Recognizes a recipe on photos (cookbook, recipe card) using AI and creates a draft.",
+      "fields": {
+        "files": {
+          "name": "Files",
+          "description": "Paths to image files (in allowed folders, e.g. /config/www)."
+        },
+        "media": {
+          "name": "Media",
+          "description": "Images from the media library."
+        },
+        "category_ids": {
+          "name": "Category IDs",
+          "description": "IDs of the categories, e.g. [3, 7]."
+        },
+        "tags": {
+          "name": "Tags",
+          "description": "Free keywords."
+        },
+        "confirm": {
+          "name": "Confirm immediately",
+          "description": "Save the draft as a recipe right away without preview."
+        }
+      }
+    },
+    "confirm_draft": {
+      "name": "Confirm draft",
+      "description": "Saves an import draft as a recipe (version 1 “Original”).",
+      "fields": {
+        "draft_id": {
+          "name": "Draft ID",
+          "description": "ID of the import draft."
+        },
+        "title": {
+          "name": "Title",
+          "description": "Different title."
+        },
+        "category_ids": {
+          "name": "Category IDs",
+          "description": "IDs of the categories, e.g. [3, 7]."
+        },
+        "tags": {
+          "name": "Tags",
+          "description": "Free keywords."
+        },
+        "allow_duplicate": {
+          "name": "Allow duplicate",
+          "description": "Import even if the source already exists."
+        }
+      }
+    },
+    "discard_draft": {
+      "name": "Discard draft",
+      "description": "Deletes an import draft including its images.",
+      "fields": {
+        "draft_id": {
+          "name": "Draft ID",
+          "description": "ID of the import draft."
+        }
+      }
+    },
+    "search": {
+      "name": "Search recipes",
+      "description": "Searches recipes by text, category, tags and rating.",
+      "fields": {
+        "query": {
+          "name": "Query",
+          "description": "Searches title, ingredients, tags and categories."
+        },
+        "category_id": {
+          "name": "Category ID",
+          "description": "Only recipes in this category (including subcategories)."
+        },
+        "include_subcategories": {
+          "name": "Include subcategories",
+          "description": "Also search recipes in subcategories."
+        },
+        "tags": {
+          "name": "Tags",
+          "description": "Free keywords."
+        },
+        "min_stars": {
+          "name": "Minimum stars",
+          "description": "Only recipes with at least this average rating."
+        },
+        "never_cooked": {
+          "name": "Never cooked",
+          "description": "Only recipes that were never cooked."
+        },
+        "not_cooked_days": {
+          "name": "Not cooked for (days)",
+          "description": "Only recipes not cooked for this long."
+        },
+        "sort": {
+          "name": "Sort",
+          "description": "Order of results."
+        },
+        "limit": {
+          "name": "Limit",
+          "description": "Maximum number of results."
+        }
+      }
+    },
+    "get_recipe": {
+      "name": "Get recipe",
+      "description": "Returns a recipe with ingredients and steps, optionally scaled to servings.",
+      "fields": {
+        "recipe_id": {
+          "name": "Recipe ID",
+          "description": "ID of the recipe."
+        },
+        "version_id": {
+          "name": "Version ID",
+          "description": "Specific version instead of the default version."
+        },
+        "servings": {
+          "name": "Servings",
+          "description": "Scale to this number of servings."
+        }
+      }
+    },
+    "random_recipe": {
+      "name": "Random recipe",
+      "description": "Picks a random recipe, e.g. for “What should I cook today?”.",
+      "fields": {
+        "category_id": {
+          "name": "Category ID",
+          "description": "Only recipes in this category (including subcategories)."
+        },
+        "tags": {
+          "name": "Tags",
+          "description": "Free keywords."
+        },
+        "min_stars": {
+          "name": "Minimum stars",
+          "description": "Only recipes with at least this average rating."
+        }
+      }
+    },
+    "rate_recipe": {
+      "name": "Rate recipe",
+      "description": "Stores a rating and/or a cooking session.",
+      "fields": {
+        "recipe_id": {
+          "name": "Recipe ID",
+          "description": "ID of the recipe."
+        },
+        "stars": {
+          "name": "Stars",
+          "description": "0.5 to 5 stars in half steps."
+        },
+        "comment": {
+          "name": "Comment",
+          "description": "Free text for the rating."
+        },
+        "cooked": {
+          "name": "Cooked",
+          "description": "Count as a cooking session (otherwise rating only)."
+        },
+        "servings": {
+          "name": "Servings",
+          "description": "Scale to this number of servings."
+        }
+      }
+    },
+    "add_to_shopping_list": {
+      "name": "Add to shopping list",
+      "description": "Adds the ingredients of a recipe to the shopping list.",
+      "fields": {
+        "recipe_id": {
+          "name": "Recipe ID",
+          "description": "ID of the recipe."
+        },
+        "servings": {
+          "name": "Servings",
+          "description": "Scale to this number of servings."
+        },
+        "todo_entity": {
+          "name": "List",
+          "description": "Another to-do list instead of the Rezeptbuch shopping list."
+        }
+      }
+    },
+    "create_category": {
+      "name": "Create category",
+      "description": "Creates a (sub)category.",
+      "fields": {
+        "name": {
+          "name": "Name",
+          "description": "Name of the category."
+        },
+        "parent_id": {
+          "name": "Parent category",
+          "description": "ID of the parent category."
+        },
+        "icon": {
+          "name": "Icon",
+          "description": "MDI icon, e.g. mdi:cake."
+        },
+        "color": {
+          "name": "Color",
+          "description": "Color as hex value."
+        }
+      }
+    },
+    "assign_category": {
+      "name": "Assign categories",
+      "description": "Assigns a recipe to categories.",
+      "fields": {
+        "recipe_id": {
+          "name": "Recipe ID",
+          "description": "ID of the recipe."
+        },
+        "category_ids": {
+          "name": "Category IDs",
+          "description": "IDs of the categories, e.g. [3, 7]."
+        },
+        "replace": {
+          "name": "Replace",
+          "description": "Replace existing categories instead of adding."
+        }
+      }
+    },
+    "delete_recipe": {
+      "name": "Delete recipe",
+      "description": "Deletes a recipe including all versions, ratings and images.",
+      "fields": {
+        "recipe_id": {
+          "name": "Recipe ID",
+          "description": "ID of the recipe."
+        }
+      }
+    }
+  },
   "exceptions": {
     "unknown_error": {
       "message": "Unknown error in Rezeptbuch."
@@ -38,6 +415,24 @@
     },
     "no_photos": {
       "message": "Please select at least one photo (at most 10)."
+    },
+    "not_loaded": {
+      "message": "Rezeptbuch is not loaded."
+    },
+    "not_found": {
+      "message": "Not found: {message}"
+    },
+    "conflict": {
+      "message": "Conflict: {message}"
+    },
+    "invalid_input": {
+      "message": "Invalid input: {message}"
+    },
+    "path_not_allowed": {
+      "message": "Access to {path} is not allowed or the file is not readable (allowlist_external_dirs)."
+    },
+    "media_not_local": {
+      "message": "The media item {media} is not a local image file."
     }
   }
 }
