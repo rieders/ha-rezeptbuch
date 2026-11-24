@@ -7,8 +7,13 @@ import socket
 
 import aiohttp
 import pytest
-from pytest_homeassistant_custom_component.plugins import HASocketBlockedError
+import pytest_socket
 from pytest_socket import SocketBlockedError
+
+try:  # neuere Plugin-Versionen zählen blockierte Versuche und lassen den Test scheitern
+    from pytest_homeassistant_custom_component.plugins import HASocketBlockedError
+except ImportError:  # ältere Versionen (HA 2026.2)
+    HASocketBlockedError = None
 
 
 @pytest.fixture
@@ -18,6 +23,9 @@ def expect_blocked_attempts():
     Hier sind die Versuche Absicht: Nach dem Test prüfen, dass sie tatsächlich
     blockiert wurden, und die Zählung zurücksetzen.
     """
+    if HASocketBlockedError is None:
+        yield
+        return
     HASocketBlockedError.instances = []
     yield
     assert HASocketBlockedError.instances, "Erwarteter Socket-Zugriff wurde nicht blockiert"
@@ -38,6 +46,10 @@ def test_socket_creation_blocked() -> None:
         socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 
+@pytest.mark.skipif(
+    not hasattr(pytest_socket, "_guarded_getaddrinfo"),
+    reason="ältere pytest-socket-Versionen (HA 2026.2) sperren DNS nicht – Sockets bleiben gesperrt",
+)
 def test_dns_blocked() -> None:
     """Auch Namensauflösung ist gesperrt (HA-Plugin bzw. pytest-socket)."""
     with pytest.raises(RuntimeError, match=r"(?i)dns|getaddrinfo"):

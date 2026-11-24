@@ -52,7 +52,8 @@ Abänderungen und hierarchische Kategorien gehören dazu. Die Oberfläche ist de
 
 ## Installation
 
-Voraussetzung: Home Assistant **2025.8** oder neuer (für `ai_task` mit Anhängen).
+Voraussetzung: Home Assistant **2026.2.3** oder neuer. Getestet wird automatisch gegen
+HA 2026.2.3 (Python 3.13) und HA 2026.10.4 (Python 3.14).
 
 ### Über HACS (benutzerdefiniertes Repository)
 
