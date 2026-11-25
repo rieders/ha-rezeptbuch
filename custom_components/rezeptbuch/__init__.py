@@ -28,9 +28,12 @@ from .coordinator import RezeptbuchCoordinator
 from .db import Database
 from .db.categories import create_default_tree
 from .media_source import async_register_media_source, async_unregister_media_source
+from .panel import async_register_panel, async_register_static, async_unregister_panel
 from .runtime import RezeptbuchConfigEntry, RezeptbuchRuntime
 from .services import async_setup_services
 from .storage import Storage
+from .views import async_register_views
+from .websocket_api import async_register_commands
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -39,8 +42,11 @@ CONFIG_SCHEMA = cv.config_entry_only_config_schema(DOMAIN)
 
 
 async def async_setup(hass: HomeAssistant, config: ConfigType) -> bool:
-    """Aktionen einmalig registrieren."""
+    """Aktionen, WebSocket-Befehle, HTTP-Views und Bundle-Pfad einmalig registrieren."""
     async_setup_services(hass)
+    async_register_commands(hass)
+    async_register_views(hass)
+    await async_register_static(hass)
     return True
 
 
@@ -77,6 +83,7 @@ async def async_setup_entry(hass: HomeAssistant, entry: RezeptbuchConfigEntry) -
 
     async_register_media_source(hass)
     await hass.config_entries.async_forward_entry_setups(entry, PLATFORMS)
+    await async_register_panel(hass)
 
     async def _async_cleanup(_now: datetime | None = None) -> None:
         try:
@@ -113,9 +120,10 @@ async def _async_options_updated(hass: HomeAssistant, entry: RezeptbuchConfigEnt
 
 
 async def async_unload_entry(hass: HomeAssistant, entry: RezeptbuchConfigEntry) -> bool:
-    """Plattformen entladen, Media Source abmelden, Datenbank schließen."""
+    """Plattformen entladen, Panel und Media Source abmelden, Datenbank schließen."""
     unloaded = await hass.config_entries.async_unload_platforms(entry, PLATFORMS)
     if unloaded:
+        async_unregister_panel(hass)
         async_unregister_media_source(hass)
         await entry.runtime_data.db.async_close()
     return unloaded

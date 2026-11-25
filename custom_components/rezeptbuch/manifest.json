@@ -3,13 +3,18 @@
   "name": "Rezeptbuch",
   "after_dependencies": [
     "ai_task",
-    "media_source"
+    "frontend",
+    "media_source",
+    "panel_custom"
   ],
   "codeowners": [
     "@rieders"
   ],
   "config_flow": true,
-  "dependencies": [],
+  "dependencies": [
+    "http",
+    "websocket_api"
+  ],
   "documentation": "https://github.com/rieders/ha-rezeptbuch",
   "integration_type": "service",
   "iot_class": "calculated",
